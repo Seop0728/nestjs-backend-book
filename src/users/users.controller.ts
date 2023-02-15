@@ -3,12 +3,17 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { VerifyEmailDto } from './dto/verify-email.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { UserInfo } from './userInfo';
+import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
+  constructor(private userService: UsersService) {}
+
+  // 회원가입
   @Post()
   async createUser(@Body() dto: CreateUserDto): Promise<void> {
-    console.log(dto);
+    const { name, email, password } = dto;
+    await this.userService.createUser(name, email, password);
   }
 
   @Post('/email-verify')
