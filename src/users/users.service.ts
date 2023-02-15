@@ -19,6 +19,14 @@ export class UsersService {
     return false; // TODO: DB연동 후 구현.
   }
 
+  // 이메일 인증 로직
+  async verifyEmail(signupVerifyToken: string): Promise<string> {
+    // TODO
+    // 1. DB에서 Token으로 회원 가입 처리중인 유저가 있는지 조회하고 없다면 에러 처리
+    // 2. 바로 로그인 상태가 되도록 JWT를 발급
+    throw new Error('Method not implemented');
+  }
+
   private saveUser(
     name: string,
     email: string,
