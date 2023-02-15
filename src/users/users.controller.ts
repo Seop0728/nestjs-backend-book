@@ -24,13 +24,12 @@ export class UsersController {
 
   @Post('/login')
   async login(@Body() dto: LoginUserDto): Promise<string> {
-    console.log(dto);
-    return;
+    const { email, password } = dto;
+    return await this.userService.login(email, password);
   }
 
   @Get('/:id')
   async getUserInfo(@Param('id') userId: string): Promise<UserInfo> {
-    console.log(userId);
-    return;
+    return await this.userService.getUserInfo(userId);
   }
 }
