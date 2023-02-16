@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import Mail from 'nodemailer/lib/mailer';
 import * as nodemailer from 'nodemailer';
+import { ConfigService } from '@nestjs/config';
 
 interface EamilOptions {
   to: string;
@@ -12,12 +13,12 @@ interface EamilOptions {
 export class EmailService {
   private transporter: Mail;
 
-  constructor() {
+  constructor(private readonly configService: ConfigService) {
     this.transporter = nodemailer.createTransport({
-      service: 'Gmail',
+      service: this.configService.get('NODEMAILER_SERVICE'),
       auth: {
-        user: 'snsg3341@gmail.com',
-        pass: '',
+        user: this.configService.get('NODEMAILER_EMAIL'),
+        pass: this.configService.get('NODEMAILER_PASSWORD'),
       },
     });
   }
@@ -26,7 +27,7 @@ export class EmailService {
     emailAddress: string,
     signupVerifyToken: string,
   ) {
-    const baseUrl = 'http://localhost:3000';
+    const baseUrl = this.configService.get('NODEMAILER_BASEURL');
 
     const url = `${baseUrl}/users/email-verify?signupVerifyToken=${signupVerifyToken}`;
 
