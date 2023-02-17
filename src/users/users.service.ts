@@ -1,14 +1,26 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import * as uuid from 'uuid';
 import { EmailService } from '../email/email.service';
 import { UserInfo } from './userInfo';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserEntiy } from './entiy/user.entiy';
+import { Repository } from 'typeorm';
+import { ulid } from 'ulid';
 
 @Injectable()
 export class UsersService {
-  constructor(private emailService: EmailService) {}
+  constructor(
+    private emailService: EmailService,
+    @InjectRepository(UserEntiy)
+    private userEntiyRepository: Repository<UserEntiy>,
+  ) {}
 
+  // 회원가입
   async createUser(name: string, email: string, password: string) {
-    await this.checkUserExists(email);
+    const userExist = await this.checkUserExists(email);
+    if (userExist) {
+      throw new UnauthorizedException('이미 가입된 메일 입니다.');
+    }
 
     const signupVerifyToken = uuid.v1();
 
@@ -16,8 +28,13 @@ export class UsersService {
     await this.sendMemberJoinEmail(email, signupVerifyToken);
   }
 
-  private checkUserExists(email: string) {
-    return false; // TODO: DB연동 후 구현.
+  // 유저 조회
+  private async checkUserExists(email: string): Promise<boolean> {
+    const user = await this.userEntiyRepository.findOne({
+      where: { email },
+    });
+
+    return user !== undefined;
   }
 
   // 이메일 인증 로직
@@ -28,13 +45,19 @@ export class UsersService {
     throw new Error('Method not implemented');
   }
 
-  private saveUser(
+  private async saveUser(
     name: string,
     email: string,
     password: string,
     signupVerifyToken: string,
   ) {
-    return; // TODO: DB연동 후 구현.
+    const user = new UserEntiy(); // 새로운 유저 엔티티 객체를 생성
+    user.id = ulid(); // 인수로 전달받은 유저 정보를 엔티티에 설정
+    user.name = name;
+    user.email = email;
+    user.password = password;
+    user.signupVerifyToken = signupVerifyToken;
+    await this.userEntiyRepository.save(user); // 저장소를 이용하여 엔티티를 데이터베이스에 저장.
   }
 
   private async sendMemberJoinEmail(email: string, signupVerifyToken: string) {

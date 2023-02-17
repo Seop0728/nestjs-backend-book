@@ -1,10 +1,11 @@
+### 회원가입
 POST localhost:3000/users
 Content-Type: application/json
 
 {
   "name": "성민섭",
   "email": "ms_sh0728@naver.com",
-  "password": "123412341"
+  "password": "dkssudgktpdygg"
 }
 
 ### 이메일
