@@ -1,9 +1,9 @@
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
 import { Injectable } from '@nestjs/common';
-import { UserEntiy } from '../users/entiy/user.entiy';
+
 @Injectable()
-export class TypeormConfigService implements TypeOrmOptionsFactory {
+export class OrmConfig implements TypeOrmOptionsFactory {
   constructor(private readonly configService: ConfigService) {}
   createTypeOrmOptions(): TypeOrmModuleOptions {
     // console.log(this.configService.get('TEST'));
@@ -14,8 +14,10 @@ export class TypeormConfigService implements TypeOrmOptionsFactory {
       username: this.configService.get<string>('DATABASE_USERNAME'),
       password: this.configService.get<string>('DATABASE_PASSWORD'),
       database: this.configService.get<string>('DATABASE_NAME'),
-      entities: [UserEntiy],
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true, // 연결될때 데이터베이스 초기화댐
+      migrations: [__dirname + '/**/migrations/*{.ts,.js}'],
+      migrationsTableName: 'migrations',
     };
   }
 }
