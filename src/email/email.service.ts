@@ -22,7 +22,6 @@ export class EmailService {
       },
     });
   }
-
   async sendMemberJoinVerification(
     emailAddress: string,
     signupVerifyToken: string,

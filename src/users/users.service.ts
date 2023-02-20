@@ -3,6 +3,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import * as uuid from 'uuid';
 import { EmailService } from '../email/email.service';
@@ -27,20 +28,23 @@ export class UsersService {
   async createUser(name: string, email: string, password: string) {
     const userExist = await this.checkUserExists(email);
     if (userExist) {
-      throw new UnauthorizedException('이미 가입된 메일 입니다.');
+      throw new UnprocessableEntityException(
+        '해당 이메일로는 가입할 수 없습니다.',
+      );
     }
 
     const signupVerifyToken = uuid.v1();
 
     // await this.saveUser(name, email, password, signupVerifyToken);
-    // await this.sendMemberJoinEmail(email, signupVerifyToken);
-
-    await this.saveUserUsingQueryRunner(
+    // await this.saveUserUsingQueryRunner(name, email, password, signupVerifyToken);
+    await this.saveUserUsingTransaction(
       name,
       email,
       password,
       signupVerifyToken,
     );
+
+    await this.sendMemberJoinEmail(email, signupVerifyToken);
   }
 
   // 유저 조회
@@ -122,6 +126,23 @@ export class UsersService {
     }
   }
 
+  private async saveUserUsingTransaction(
+    name: string,
+    email: string,
+    password: string,
+    signupVerifyToken: string,
+  ) {
+    await this.dataSource.transaction(async (manager) => {
+      const user = new UserEntity();
+      user.id = ulid();
+      user.name = name;
+      user.email = email;
+      user.password = password;
+      user.signupVerifyToken = signupVerifyToken;
+
+      await manager.save(user);
+    });
+  }
   // 인증메일 전송
   private async sendMemberJoinEmail(email: string, signupVerifyToken: string) {
     await this.emailService.sendMemberJoinVerification(
