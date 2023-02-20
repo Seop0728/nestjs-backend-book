@@ -1,6 +1,7 @@
 import {
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import * as uuid from 'uuid';
@@ -10,6 +11,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './entity/user.entity';
 import { DataSource, Repository } from 'typeorm';
 import { ulid } from 'ulid';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class UsersService {
@@ -18,6 +20,7 @@ export class UsersService {
     @InjectRepository(UserEntity)
     private userEntiyRepository: Repository<UserEntity>,
     private dataSource: DataSource, // typeorm에서 제공하는 DataSource 객체를 주입
+    private authService: AuthService,
   ) {}
 
   // 회원가입
@@ -54,7 +57,19 @@ export class UsersService {
     // TODO
     // 1. DB에서 Token으로 회원 가입 처리중인 유저가 있는지 조회하고 없다면 에러 처리
     // 2. 바로 로그인 상태가 되도록 JWT를 발급
-    throw new Error('Method not implemented');
+    const user = await this.userEntiyRepository.findOne({
+      where: { signupVerifyToken },
+    });
+
+    if (!user) {
+      throw new NotFoundException('유저가 존재하지않습니다.');
+    }
+
+    return this.authService.login({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    });
   }
 
   // 회원가입 데이터 저장
@@ -121,7 +136,19 @@ export class UsersService {
     // 1. email, password를 가진 유저가 존재하는지 DB에서 확인하고 없다면 에러 처리
     // 2. JWT를 발급
 
-    throw new Error('Method not implemented');
+    const user = await this.userEntiyRepository.findOne({
+      where: { email, password },
+    });
+
+    if (!user) {
+      throw new NotFoundException('유저가 존재하지 않습니다');
+    }
+
+    return this.authService.login({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    });
   }
 
   // 유저 정보 조희
