@@ -10,6 +10,7 @@ import { Logger2Middleware } from './logger/logger2.middleware';
 import { UsersController } from './users/users.controller';
 import { AuthModule } from './auth/auth.module';
 import authConfig from './config/authConfig';
+import { ExceptionModule } from './exception/exception.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import authConfig from './config/authConfig';
     UsersModule,
     EmailModule,
     AuthModule,
+    ExceptionModule,
   ],
   controllers: [],
   providers: [],
