@@ -11,6 +11,10 @@ import { UsersController } from './users/users.controller';
 import { AuthModule } from './auth/auth.module';
 import authConfig from './config/authConfig';
 import { ExceptionModule } from './exception/exception.module';
+import { BatchModule } from './batch/batch.module';
+import { TerminusModule } from '@nestjs/terminus';
+import { HealthCheckController } from './health-check/health-check.controller';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -26,9 +30,12 @@ import { ExceptionModule } from './exception/exception.module';
     EmailModule,
     AuthModule,
     ExceptionModule,
+    BatchModule,
+    TerminusModule,
+    HttpModule,
   ],
-  controllers: [],
-  providers: [],
+  controllers: [HealthCheckController],
+  providers: [HealthCheckController],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): any {

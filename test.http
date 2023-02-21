@@ -40,3 +40,7 @@ Content-Type: application/json
   "email": "ms_sh0728@naver.com",
   "password": "asdf"
 }
+
+### Health-Check
+GET http://localhost:3000/health-check
+Content-Type: application/json
