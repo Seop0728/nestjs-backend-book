@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import * as uuid from 'uuid';
 import { EmailService } from '../email/email.service';
-import { UserInfo } from './userInfo';
+import { UserInfo } from './UserInfo';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './entity/user.entity';
 import { DataSource, Repository } from 'typeorm';
