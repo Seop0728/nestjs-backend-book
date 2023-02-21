@@ -17,6 +17,8 @@ import { LoginUserDto } from './dto/login-user.dto';
 import { UserInfo } from './userInfo';
 import { UsersService } from './users.service';
 import { AuthService } from '../auth/auth.service';
+import { CommandBus } from '@nestjs/cqrs';
+import { CreateUserCommand } from './command/create-user.command';
 
 @Controller('users')
 export class UsersController {
@@ -24,14 +26,17 @@ export class UsersController {
     private userService: UsersService,
     private authService: AuthService,
     @Inject(Logger) private readonly logger: LoggerService,
+    private commandBus: CommandBus,
   ) {}
 
   // 회원가입
   @Post()
   async createUser(@Body() dto: CreateUserDto): Promise<void> {
-    this.printLoggerServiceLog(dto);
     const { name, email, password } = dto;
-    await this.userService.createUser(name, email, password);
+
+    const command = new CreateUserCommand(name, email, password);
+
+    return this.commandBus.execute(command);
   }
 
   private printLoggerServiceLog(dto) {
