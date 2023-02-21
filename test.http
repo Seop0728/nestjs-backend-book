@@ -23,14 +23,16 @@ Content-Type: application/json
 
 {
   "email": "ms_sh0728@naver.com",
-  "password": "1234"
+  "password": "dkssudgktpdygg"
 }
 
 ### 회원 정보 조회
-GET localhost:3000/users/1
+GET localhost:3000/users/01GSPR1AW9H6J4F1TW7FYBKCBB
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjAxR1NQUjFBVzlINko0RjFUVzdGWUJLQ0JCIiwibmFtZSI6IuyEseuvvOyErSIsImVtYWlsIjoibXNfc2gwNzI4QG5hdmVyLmNvbSIsImlhdCI6MTY3Njg3OTg2NCwiZXhwIjoxNjc2OTY2MjY0LCJhdWQiOiJleGFtcGxlLmNvbSIsImlzcyI6ImV4YW1wbGUuY29tIn0.Aw_cynUp0vSIshcSZogT8YK7utTfGN158qNduSuuc5E
+
 
 ### 메일 인증
-POST localhost:3000/users
+POST localhost:3000/users/
 Content-Type: application/json
 
 {

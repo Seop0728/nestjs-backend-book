@@ -30,9 +30,7 @@ import authConfig from './config/authConfig';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): any {
-    consumer
-      .apply(LoggerMiddleware, Logger2Middleware)
-      .forRoutes(UsersController);
+    consumer.apply(authConfig, Logger2Middleware).forRoutes(UsersController);
     // .exclude({ path: 'users', method: RequestMethod.GET },)
     // .forRoutes(UsersController);
   }
